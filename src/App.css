@@ -3,7 +3,7 @@
 }
 
 .App-header {
-  background-color: aqua;
+  background-color: white;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -17,3 +17,7 @@
   border-radius: 0;
 }
 
+#loginForm form{
+  width: 350px;
+  margin: auto;
+}

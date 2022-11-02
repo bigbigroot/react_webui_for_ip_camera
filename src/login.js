@@ -2,28 +2,30 @@ import React from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import {Button, Container, Form} from 'react-bootstrap';
+import {Button, FloatingLabel, Form} from 'react-bootstrap';
 
 class LoginForm extends React.Component{
 
     render(){
         return(
-            <Container className="container-sm">
+            <div class="text-center mt-5 p-5 border bg-light rounded shadow" id="loginForm">
               <Form>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>Email address</Form.Label>
-                  <Form.Control type="email" placeholder="Enter email" />
-                </Form.Group>
-            
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                  <Form.Label>Password</Form.Label>
+                <h1 class="h3 mb-4 font-weight-normal">Login</h1>
+                <FloatingLabel className="mb-4" controlId="formUsername" label="Username">
+                  <Form.Control type="username" placeholder="Username" />
+                </FloatingLabel>
+
+                <FloatingLabel className="mb-4" controlId="formPassword" label="Password">
                   <Form.Control type="password" placeholder="Password" />
-                </Form.Group>
-                <Button>
-                    Sign in
-                </Button>
+                </FloatingLabel>
+
+                <div class="d-grid gap-2">
+                  <Button variant="dark" type="submit">
+                    Login 
+                  </Button>
+                </div>
               </Form>
-            </Container>
+            </div>
         )
     }
 }
