@@ -10,23 +10,23 @@ class LoginForm extends React.Component{
         return(
             <div class="text-center mt-5 p-5 border bg-light rounded shadow" id="loginForm">
               <Form>
-                <h1 class="h3 mb-4 font-weight-normal">Login</h1>
+                <h1 class="h3 mb-4 font-weight-normal">LOGIN</h1>
                 <FloatingLabel className="mb-4" controlId="formUsername" label="Username">
-                  <Form.Control type="username" placeholder="Username" />
+                  <Form.Control type="text" placeholder="Username" maxLength="16" />
                 </FloatingLabel>
 
                 <FloatingLabel className="mb-4" controlId="formPassword" label="Password">
-                  <Form.Control type="password" placeholder="Password" />
+                  <Form.Control type="password" placeholder="Password"  maxLength="32"/>
                 </FloatingLabel>
 
                 <div class="d-grid gap-2">
                   <Button variant="dark" type="submit">
-                    Login 
+                    LOGIN 
                   </Button>
                 </div>
               </Form>
             </div>
-        )
+        );
     }
 }
 
