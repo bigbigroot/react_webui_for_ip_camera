@@ -1,16 +1,20 @@
 import './App.css';
-import MyStyleNavbar from './myStyleNavbar';
+import './pages.css'
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import AppsPageNavbar from './myStyleNavbar';
 import LoginForm from './login';
-//import DisplayCamCapPicture from './CameraDisplayer';
+// import LivePlayer from './CameraDisplayer';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <MyStyleNavbar />
-
-        <LoginForm />
+      <header>
+        <AppsPageNavbar />
       </header>
+      <main className='App-main'>
+        <LoginForm />
+      </main>
     </div>
   );
 }

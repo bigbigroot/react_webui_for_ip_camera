@@ -1,34 +1,27 @@
 import React from 'react';
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-import {Button, FloatingLabel, Form} from 'react-bootstrap';
+import {MDBInput,MDBBtn, MDBIcon} from 'mdb-react-ui-kit'
 
-class LoginForm extends React.Component{
+export default function LoginForm(){
 
-    render(){
-        return(
-            <div class="text-center mt-5 p-5 border bg-light rounded shadow" id="loginForm">
-              <Form>
-                <h1 class="h3 mb-4 font-weight-normal">LOGIN</h1>
-                <FloatingLabel className="mb-4" controlId="formUsername" label="Username">
-                  <Form.Control type="text" placeholder="Username" maxLength="16" />
-                </FloatingLabel>
+  return(
+    <div className="text-center mt-5 p-5 border bg-light rounded shadow" id="loginForm">
+      <form>
+        <div className="ms-5 me-5">
+        <MDBIcon  size='3x' fas icon="user-circle" />
+        <h6 className="mb-5 mt-3 fw-lighter text-break">
+          Login with your username and Password
+        </h6>
 
-                <FloatingLabel className="mb-4" controlId="formPassword" label="Password">
-                  <Form.Control type="password" placeholder="Password"  maxLength="32"/>
-                </FloatingLabel>
+        </div>
+                
+        <MDBInput className='mb-4' type='text' id='formUsername' label='Username' maxLength='16'/>
+        <MDBInput className='mb-4' type='password' id='formPasswd' label='Password' maxLength='32'/>
 
-                <div class="d-grid gap-2">
-                  <Button variant="dark" type="submit">
-                    LOGIN 
-                  </Button>
-                </div>
-              </Form>
-            </div>
-        );
-    }
+        <MDBBtn type='submit' block>
+          Login
+        </MDBBtn>
+      </form>
+    </div>
+  );
 }
-
-
-export default LoginForm;

@@ -1,0 +1,10 @@
+.navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+}
+  
+#loginForm form{
+  min-width: 300px;
+  max-width: 350px;
+  margin: auto;
+}

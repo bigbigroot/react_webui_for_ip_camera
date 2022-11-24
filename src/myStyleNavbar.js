@@ -1,38 +1,76 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import {React, useState} from 'react';
 
-import {Container, Nav, Navbar, Stack} from 'react-bootstrap';
+import {
+  MDBContainer, 
+  MDBNavbar, 
+  MDBNavbarBrand, 
+  MDBNavbarToggler, 
+  MDBCollapse, 
+  MDBTabs, 
+  MDBTabsItem, 
+  MDBTabsLink,
+  MDBIcon
+} from 'mdb-react-ui-kit'
 
 //draw navigator bar 
-function MyStyleNavbar(){
-    return(
-      <Navbar fixed="top" variant="dark" bg="dark" expand="lg">
-        <Navbar.Brand className="ms-auto" href="#">
-          <img
-            alt="icon"
-            src="ip-camera-icon-dark.png"
-            width="30"
-            height="30"
-            className="d-inline-block align-bootom"
-          />
-        Wireless Network Camera
-        </Navbar.Brand>
-        <Container className="container-fluid">
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mx-auto">
-              <Stack direction="horizontal" gap={4}>
-                <Nav.Link eventKey="camera">Camera</Nav.Link>
-                <Nav.Link eventKey="network">Network</Nav.Link>
-                <Nav.Link eventKey="wifi">Wireless</Nav.Link>
-                <Nav.Link eventKey="users">Users</Nav.Link>
-                <Nav.Link eventKey="help">Help</Nav.Link>
-              </Stack>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-    );
-}
+export default function AppsPageNavbar(props){
+  const {disable} = props;
 
-export default MyStyleNavbar;
+  const [showNavNoToggler, setShowNavNoToggler] = useState(false);
+  const [basicActive, setBasicActive] = useState('Camera');
+
+  function handleBasicClick(value){
+    if (value === basicActive) {
+      return;
+    }
+
+    setBasicActive(value);
+  };
+
+  return(
+    <MDBNavbar fixed='top' sticky expand="md">      
+      <MDBContainer fluid>
+        <MDBNavbarBrand className="ms-5 fw-bold font-monospace text-uppercase fs-5" href="#">
+          <img 
+            src="./640px-WiFi_Logo.svg.png" 
+            width="40"
+            height="30"
+            alt="WiFi"
+            className="d-inline-block align-center"
+          />{' '}
+          camera
+        </MDBNavbarBrand>
+        <MDBNavbarToggler
+          type='button'
+          aria-expanded='false'
+          onClick={() => setShowNavNoToggler(!showNavNoToggler)}
+        >            
+          <MDBIcon icon='bars' fas />
+        </MDBNavbarToggler>
+        <MDBCollapse navbar show={showNavNoToggler}>
+        {
+          (!disable)?(
+            <MDBTabs justify  className="mx-auto">
+            <MDBTabsItem>
+              <MDBTabsLink onClick={() => handleBasicClick('Camera')} active={basicActive === 'Camera'}>Camera</MDBTabsLink>
+            </MDBTabsItem>
+            <MDBTabsItem>
+              <MDBTabsLink onClick={() => handleBasicClick('Network')} active={basicActive === 'Network'}>Network</MDBTabsLink>                  
+            </MDBTabsItem>
+            <MDBTabsItem>
+              <MDBTabsLink onClick={() => handleBasicClick('Wireless')} active={basicActive === 'Wireless'}>Wireless</MDBTabsLink>                  
+            </MDBTabsItem>
+            <MDBTabsItem>
+              <MDBTabsLink onClick={() => handleBasicClick('Users')} active={basicActive === 'Users'}>Users</MDBTabsLink> 
+            </MDBTabsItem>                 
+            <MDBTabsItem>
+              <MDBTabsLink onClick={() => handleBasicClick('Help')} active={basicActive === 'Help'}>Help</MDBTabsLink> 
+            </MDBTabsItem>
+            </MDBTabs>
+          ) : null
+        }
+        </MDBCollapse>
+      </MDBContainer>
+    </MDBNavbar>
+  );
+}
