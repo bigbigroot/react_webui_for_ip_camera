@@ -9,11 +9,12 @@ import {
   MDBTabs, 
   MDBTabsItem, 
   MDBTabsLink,
-  MDBIcon
+  MDBIcon,
+  MDBFooter
 } from 'mdb-react-ui-kit'
 
 //draw navigator bar 
-export default function AppsPageNavbar(props){
+export function AppsPageNavbar(props){
   const {disable} = props;
 
   const [showNavNoToggler, setShowNavNoToggler] = useState(false);
@@ -72,5 +73,16 @@ export default function AppsPageNavbar(props){
         </MDBCollapse>
       </MDBContainer>
     </MDBNavbar>
+  );
+}
+
+export function AppsFooter()
+{
+  return(
+    <MDBFooter className="text-center text-lg-left">
+    <div className='text-center p-3' style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
+    &copy;  {new Date().getFullYear()} create by <MDBIcon fas icon='user'></MDBIcon> Huang, Weigen.
+    </div>
+    </MDBFooter>
   );
 }

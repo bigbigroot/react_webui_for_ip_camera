@@ -1,10 +1,12 @@
 import './App.css';
 import './pages.css'
+import '@fontsource/roboto'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
-import AppsPageNavbar from './myStyleNavbar';
-import LoginForm from './login';
-// import LivePlayer from './CameraDisplayer';
+
+import {AppsPageNavbar} from './myStyleNavbar';
+import {LoginPage} from './login';
+import {CameraPage} from './CameraDisplayer';
 
 function App() {
   return (
@@ -12,8 +14,8 @@ function App() {
       <header>
         <AppsPageNavbar />
       </header>
-      <main className='App-main'>
-        <LoginForm />
+      <main>
+        <CameraPage />
       </main>
     </div>
   );

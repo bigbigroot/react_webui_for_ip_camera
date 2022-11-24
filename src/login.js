@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {MDBInput,MDBBtn, MDBIcon} from 'mdb-react-ui-kit'
+import {MDBInput,MDBBtn, MDBIcon, MDBContainer} from 'mdb-react-ui-kit'
 
-export default function LoginForm(){
+export function LoginForm(){
 
   return(
     <div className="text-center mt-5 p-5 border bg-light rounded shadow" id="loginForm">
@@ -23,5 +23,16 @@ export default function LoginForm(){
         </MDBBtn>
       </form>
     </div>
+  );
+}
+
+export function LoginPage()
+{
+  return(
+    <MDBContainer fluid>
+      <div className="d-flex justify-content-center">
+        <LoginForm />
+      </div>
+    </MDBContainer>
   );
 }
