@@ -10,7 +10,10 @@ import {
   MDBTabsItem, 
   MDBTabsLink,
   MDBIcon,
-  MDBFooter
+  MDBFooter,
+  MDBNavbarNav,
+  MDBNavbarItem,
+  MDBNavbarLink
 } from 'mdb-react-ui-kit'
 
 //draw navigator bar 
@@ -31,7 +34,7 @@ export function AppsPageNavbar(props){
   return(
     <MDBNavbar fixed='top' sticky expand="md">      
       <MDBContainer fluid>
-        <MDBNavbarBrand className="ms-5 fw-bold font-monospace text-uppercase fs-5" href="#">
+        <MDBNavbarBrand className="ms-5 fw-bold font-monospace text-uppercase fs-5" href="/">
           <img 
             src="./640px-WiFi_Logo.svg.png" 
             width="40"
@@ -51,23 +54,30 @@ export function AppsPageNavbar(props){
         <MDBCollapse navbar show={showNavNoToggler}>
         {
           (!disable)?(
-            <MDBTabs justify  className="mx-auto">
-            <MDBTabsItem>
-              <MDBTabsLink onClick={() => handleBasicClick('Camera')} active={basicActive === 'Camera'}>Camera</MDBTabsLink>
-            </MDBTabsItem>
-            <MDBTabsItem>
-              <MDBTabsLink onClick={() => handleBasicClick('Network')} active={basicActive === 'Network'}>Network</MDBTabsLink>                  
-            </MDBTabsItem>
-            <MDBTabsItem>
-              <MDBTabsLink onClick={() => handleBasicClick('Wireless')} active={basicActive === 'Wireless'}>Wireless</MDBTabsLink>                  
-            </MDBTabsItem>
-            <MDBTabsItem>
-              <MDBTabsLink onClick={() => handleBasicClick('Users')} active={basicActive === 'Users'}>Users</MDBTabsLink> 
-            </MDBTabsItem>                 
-            <MDBTabsItem>
-              <MDBTabsLink onClick={() => handleBasicClick('Help')} active={basicActive === 'Help'}>Help</MDBTabsLink> 
-            </MDBTabsItem>
-            </MDBTabs>
+            <MDBNavbarNav>
+              <MDBTabs justify  className="mx-auto">
+              <MDBTabsItem>
+                <MDBTabsLink onClick={() => handleBasicClick('Camera')} active={basicActive === 'Camera'} href="/camera">Camera</MDBTabsLink>
+              </MDBTabsItem>
+              <MDBTabsItem>
+                <MDBTabsLink onClick={() => handleBasicClick('Network')} active={basicActive === 'Network'} href="/network">Network</MDBTabsLink>                  
+              </MDBTabsItem>
+              <MDBTabsItem>
+                <MDBTabsLink onClick={() => handleBasicClick('Wireless')} active={basicActive === 'Wireless' } href="/wifi">Wireless</MDBTabsLink>                  
+              </MDBTabsItem>
+              <MDBTabsItem>
+                <MDBTabsLink onClick={() => handleBasicClick('Users')} active={basicActive === 'Users'} href="/user">Users</MDBTabsLink> 
+              </MDBTabsItem>                 
+              <MDBTabsItem>
+                <MDBTabsLink onClick={() => handleBasicClick('Help')} active={basicActive === 'Help'} href="/help">Help</MDBTabsLink> 
+              </MDBTabsItem>
+              </MDBTabs>
+              <MDBNavbarItem className='ms-auto'>
+                <MDBNavbarLink href='/login'>
+                  <MDBIcon fas icon="sign-out-alt" />
+                </MDBNavbarLink>
+              </MDBNavbarItem> 
+            </MDBNavbarNav>           
           ) : null
         }
         </MDBCollapse>

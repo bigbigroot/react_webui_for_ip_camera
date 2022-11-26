@@ -3,8 +3,12 @@
     border-radius: 0;
 }
   
-#loginForm form{
+#loginform form{
   min-width: 300px;
   max-width: 350px;
   margin: auto;
+}
+
+.error-page{
+  max-width: 500px;
 }
