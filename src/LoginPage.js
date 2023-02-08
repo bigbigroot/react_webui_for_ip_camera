@@ -1,25 +1,86 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import {Form, useActionData, redirect, useOutletContext, json} from 'react-router-dom'
 
 import {MDBInput,MDBBtn, MDBIcon, MDBContainer} from 'mdb-react-ui-kit';
+import CryptoJS from 'crypto-js';
 
-import {AppsPageNavbar} from './myStyleNavbar';
-import { redirect } from 'react-router-dom';
+import { NotifyWindow } from './Compoment';
+
+export function LoginLoader(){
+  try{
+    sessionStorage.removeItem('token');
+  }catch(e){
+    console.error(e);
+  }
+}
 
 export async function LoginAction({params, request}){
+  const errors = {}
   const formData = await request.formData();
-  console.log(formData);
-  return redirect("/camera");
+  const username = formData.get('username');
+  const password = formData.get('passwd');
+
+  if(username.length == 0 || password.length == 0){
+    errors.type = 'Input Error';
+    errors.reason = 'Username and password cannot be empty!';
+    return errors;
+  }
+
+  const pwdDigest = CryptoJS.MD5(password).toString(CryptoJS.enc.Base64);
+
+  const data = {
+    "USER": username,
+    "PASSWORDHA": pwdDigest
+  }
+  try{
+    const response = await fetch("/api/login", 
+      {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          'Accept': 'application.json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      }
+    );
+
+    if (response.ok) {
+      const res = await response.json();
+      if(res.result){
+        if(res.result == 'Accept'){
+          const token = res.token;
+          // store token from server 
+          sessionStorage.setItem('token', token);
+          return redirect('/camera');
+        }else if(res.result == 'Deny'){          
+          errors.type = 'Account verification failed';
+          errors.reason = res.message+' please enter the correct username and password';
+        }
+      }
+    }else{
+      errors.type = 'Server Error';
+      errors.reason = `An error from server, by ${response.statusText} (${response.status})`;
+      
+      return errors;
+    }
+  }
+  catch(error){
+    console.error(error);
+    errors.type = 'Internal Program Error';
+    errors.reason = `An error occurred, by ${error.message} while reading server data`;
+  };
 }
 
 
 export function LoginForm(props){
-  const [usernameValue, setUsernameValue] = useState("");
-  const [PasswordValue, setPasswordValue] = useState("");
-
+  const errors = useActionData();
+  const [showError, setShowError] = useState(true);
+  
+  const refresh = ()=>setShowError(true);
 
   return(
     <div className="text-center mt-5 p-5 border bg-light rounded shadow" id="loginform">
-      <form>
+      <Form method='post' replace >
         <div className="ms-5 me-5">
         <MDBIcon  size='3x' fas icon="user-circle" />
         <h6 className="mb-5 mt-3 fw-lighter text-break">
@@ -28,28 +89,43 @@ export function LoginForm(props){
 
         </div>
                 
-        <MDBInput className='mb-4' type='text' id='formUsername' label='Username' maxLength='16'/>
-        <MDBInput className='mb-4' type='password' id='formPasswd' label='Password' maxLength='32'/>
-
-        <MDBBtn type='submit' block>
+        <MDBInput 
+          className='mb-4' type='text' id='formUsername'
+          name='username' label='Username' maxLength='16'
+        />
+        <MDBInput
+          className='mb-4' type='password' id='formPasswd'
+          name='passwd' label='Password' maxLength='32'
+        />
+        <MDBBtn type='submit' onClick={refresh} block>
           Login
         </MDBBtn>
-      </form>
+        
+        {
+          (errors)?(
+            <NotifyWindow title={errors.type} show={showError} setShow={setShowError}>
+              {errors.reason}
+            </NotifyWindow>
+          ) : null
+        }
+      </Form>
     </div>
   );
 }
 
 export function LoginPage()
 {
+  const [isLogined, setIsLogined] = useOutletContext();
 
+  useEffect(()=>setIsLogined(false))
 
   return(
-      <main>
-        <MDBContainer fluid>
-          <div className="d-flex justify-content-center">
-            <LoginForm />
-          </div>
-        </MDBContainer> 
-      </main>  
+    <main>
+      <MDBContainer fluid>
+        <div className="d-flex justify-content-center">
+          <LoginForm />
+        </div>
+      </MDBContainer>
+    </main>  
   );
 }

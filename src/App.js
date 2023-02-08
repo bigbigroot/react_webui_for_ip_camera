@@ -4,33 +4,38 @@ import '@fontsource/roboto';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 
-import React from 'react'
+import React, { useState } from 'react'
 import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
-  Outlet
+  Outlet,
+  redirect
 } from "react-router-dom";
 
 import {AppsPageNavbar} from './myStyleNavbar';
 import {ErrorPage, NotFoundPage} from './ErrorPage';
-import {LoginAction, LoginPage} from './LoginPage';
+import {LoginAction, LoginLoader, LoginPage} from './LoginPage';
 import {CameraPage} from './CameraDisplayer';
 
-async function rootAction(){
-
+function RootLoader(){
+  if(sessionStorage.getItem('token')===null){
+    return redirect('/login')
+  }
 }
 
 function Root(){
+  const [isLogined, setIsLogined] = useState(false);
   return(    
     <div className="App">
       <header>
-        <AppsPageNavbar />
+        <AppsPageNavbar disable={!isLogined}/>
       </header>
-      <Outlet />
+      <Outlet context={[isLogined, setIsLogined]} />
     </div>
   );
 }
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -44,13 +49,14 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <LoginPage />,
-        errorElement: <ErrorPage />,
+        loader: LoginLoader,
         action: LoginAction
       },
       {
         path: "camera",
         element: <CameraPage />,
         errorElement: <ErrorPage />,
+        loader: RootLoader
       },
       {
         path:"*",

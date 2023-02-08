@@ -1,4 +1,4 @@
-import { useRouteError } from "react-router-dom";
+import { Navigate, useRouteError } from "react-router-dom";
 import {
     MDBBtn
 } from "mdb-react-ui-kit"
@@ -14,9 +14,7 @@ export function ErrorPage(){
     switch (error.status) {
         case 401:
         {
-            errorText = "Unauthorized";
-            pageText = "You aren't authorized to access thie page or an other error eccured";
-            break;
+          return <Navigate to="login" />;
         }
         case 403:
         {
