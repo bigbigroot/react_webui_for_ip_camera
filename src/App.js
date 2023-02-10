@@ -17,6 +17,7 @@ import {AppsPageNavbar} from './myStyleNavbar';
 import {ErrorPage, NotFoundPage} from './ErrorPage';
 import {LoginAction, LoginLoader, LoginPage} from './LoginPage';
 import {CameraPage} from './CameraDisplayer';
+import { UserAction, UserPage } from './UserPage';
 
 function RootLoader(){
   if(sessionStorage.getItem('token')===null){
@@ -25,13 +26,14 @@ function RootLoader(){
 }
 
 function Root(){
-  const [isLogined, setIsLogined] = useState(false);
+  const [currentPage, setCurrentPage] = useState("Login");
+  
   return(    
     <div className="App">
       <header>
-        <AppsPageNavbar disable={!isLogined}/>
+        <AppsPageNavbar activePage={currentPage}/>
       </header>
-      <Outlet context={[isLogined, setIsLogined]} />
+      <Outlet context={[currentPage, setCurrentPage]} />
     </div>
   );
 }
@@ -55,12 +57,30 @@ const router = createBrowserRouter([
       {
         path: "camera",
         element: <CameraPage />,
-        errorElement: <ErrorPage />,
         loader: RootLoader
       },
       {
-        path:"*",
+        path: "network",
+        element: <UserPage />,
+        action: UserAction
+      },
+      {
+        path: "wifi",
+        element: <UserPage />,
+        action: UserAction
+      },
+      {
+        path: "user",
+        element: <UserPage />,
+        action: UserAction
+      },
+      {
+        path: "404",
         element: <NotFoundPage />
+      },
+      {
+        path:"*",
+        element: <Navigate to="404" />
       }
     ],
   },

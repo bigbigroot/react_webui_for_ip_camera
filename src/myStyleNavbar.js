@@ -6,29 +6,29 @@ import {
   MDBNavbarBrand, 
   MDBNavbarToggler, 
   MDBCollapse, 
-  MDBTabs, 
-  MDBTabsItem, 
-  MDBTabsLink,
   MDBIcon,
   MDBFooter,
   MDBNavbarNav,
   MDBNavbarItem,
-  MDBNavbarLink
+  MDBNavbarLink,
+  MDBTabs, 
+  MDBTabsItem, 
+  MDBTabsLink,
 } from 'mdb-react-ui-kit'
 
 //draw navigator bar 
 export function AppsPageNavbar(props){
-  const {disable} = props;
+  const {activePage} = props;
 
   const [showNavNoToggler, setShowNavNoToggler] = useState(false);
-  const [basicActive, setBasicActive] = useState('Camera');
+  // const [basicActive, setBasicActive] = useState('Login');
 
   function handleBasicClick(value){
-    if (value === basicActive) {
-      return;
-    }
+    // if (value === basicActive) {
+    //   return;
+    // }
 
-    setBasicActive(value);
+    // setBasicActive(value);
   };
 
   return(
@@ -53,23 +53,23 @@ export function AppsPageNavbar(props){
         </MDBNavbarToggler>
         <MDBCollapse navbar show={showNavNoToggler}>
         {
-          (!disable)?(
+          (!(activePage === 'Login'))?(
             <MDBNavbarNav>
-              <MDBTabs justify  className="mx-auto">
+              <MDBTabs fill className="mx-auto">
               <MDBTabsItem>
-                <MDBTabsLink onClick={() => handleBasicClick('Camera')} active={basicActive === 'Camera'} href="/camera">Camera</MDBTabsLink>
+                <MDBTabsLink onClick={() => handleBasicClick('Camera')} active={activePage === 'Camera'} href="/camera">Camera</MDBTabsLink>
               </MDBTabsItem>
               <MDBTabsItem>
-                <MDBTabsLink onClick={() => handleBasicClick('Network')} active={basicActive === 'Network'} href="/network">Network</MDBTabsLink>                  
+                <MDBTabsLink onClick={() => handleBasicClick('Network')} active={activePage === 'Network'} href="/network">Network</MDBTabsLink>                  
               </MDBTabsItem>
               <MDBTabsItem>
-                <MDBTabsLink onClick={() => handleBasicClick('Wireless')} active={basicActive === 'Wireless' } href="/wifi">Wireless</MDBTabsLink>                  
+                <MDBTabsLink onClick={() => handleBasicClick('Wireless')} active={activePage === 'Wireless' } href="/wifi">Wireless</MDBTabsLink>                  
               </MDBTabsItem>
               <MDBTabsItem>
-                <MDBTabsLink onClick={() => handleBasicClick('Users')} active={basicActive === 'Users'} href="/user">Users</MDBTabsLink> 
+                <MDBTabsLink onClick={() => handleBasicClick('User')} active={activePage === 'User'} href="/user">Users</MDBTabsLink> 
               </MDBTabsItem>                 
               <MDBTabsItem>
-                <MDBTabsLink onClick={() => handleBasicClick('Help')} active={basicActive === 'Help'} href="/help">Help</MDBTabsLink> 
+                <MDBTabsLink onClick={() => handleBasicClick('Help')} active={activePage === 'Help'} href="/help">Help</MDBTabsLink> 
               </MDBTabsItem>
               </MDBTabs>
               <MDBNavbarItem className='ms-auto'>

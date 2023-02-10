@@ -9,6 +9,11 @@
   margin: auto;
 }
 
+.user-page{
+  min-width: 450px;
+  max-width: 550px;
+}
+
 .error-page{
   max-width: 500px;
 }

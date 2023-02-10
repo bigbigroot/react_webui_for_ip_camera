@@ -54,12 +54,12 @@ class SignalingChannel{
 
         this.socket.on("to_answer", (msg) => {
             const data = JSON.parse(msg)
-            if(data.messageType == 'OFFER'){
+            if(data.messageType === 'OFFER'){
                 this.offererSessionId = data.offererSessionId;
                 this.currentSeq = data.seq;
                 this.remoteSdp = data.sdp;
                 this.onRemoteSdp(data.sdp);
-            }else if(data.messageType == 'OK'){
+            }else if(data.messageType === 'OK'){
                 // this.onClose();
             }
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, useActionData, redirect, useOutletContext, json} from 'react-router-dom'
+import {Form, useActionData, redirect, useOutletContext} from 'react-router-dom'
 
 import {MDBInput,MDBBtn, MDBIcon, MDBContainer} from 'mdb-react-ui-kit';
 import CryptoJS from 'crypto-js';
@@ -20,7 +20,7 @@ export async function LoginAction({params, request}){
   const username = formData.get('username');
   const password = formData.get('passwd');
 
-  if(username.length == 0 || password.length == 0){
+  if(username.length === 0 || password.length === 0){
     errors.type = 'Input Error';
     errors.reason = 'Username and password cannot be empty!';
     return errors;
@@ -29,8 +29,8 @@ export async function LoginAction({params, request}){
   const pwdDigest = CryptoJS.MD5(password).toString(CryptoJS.enc.Base64);
 
   const data = {
-    "USER": username,
-    "PASSWORDHA": pwdDigest
+    "user": username,
+    "passwordHA": pwdDigest
   }
   try{
     const response = await fetch("/api/login", 
@@ -47,12 +47,13 @@ export async function LoginAction({params, request}){
     if (response.ok) {
       const res = await response.json();
       if(res.result){
-        if(res.result == 'Accept'){
+        if(res.result === 'Accept'){
           const token = res.token;
           // store token from server 
+          sessionStorage.setItem('currentUser', username);
           sessionStorage.setItem('token', token);
           return redirect('/camera');
-        }else if(res.result == 'Deny'){          
+        }else if(res.result === 'Deny'){          
           errors.type = 'Account verification failed';
           errors.reason = res.message+' please enter the correct username and password';
         }
@@ -82,13 +83,12 @@ export function LoginForm(props){
     <div className="text-center mt-5 p-5 border bg-light rounded shadow" id="loginform">
       <Form method='post' replace >
         <div className="ms-5 me-5">
-        <MDBIcon  size='3x' fas icon="user-circle" />
-        <h6 className="mb-5 mt-3 fw-lighter text-break">
-          Login with your username and Password
-        </h6>
+          <MDBIcon  size='3x' fas icon="user-circle" />
+          <h6 className="mb-5 mt-3 fw-lighter text-break">
+            Login with your username and Password
+          </h6>
 
         </div>
-                
         <MDBInput 
           className='mb-4' type='text' id='formUsername'
           name='username' label='Username' maxLength='16'
@@ -115,9 +115,14 @@ export function LoginForm(props){
 
 export function LoginPage()
 {
-  const [isLogined, setIsLogined] = useOutletContext();
+  const [currentPage, setCurrentPage] = useOutletContext();
 
-  useEffect(()=>setIsLogined(false))
+  useEffect(()=>{
+      if(currentPage != 'Login'){
+        setCurrentPage('Login')
+      }
+    }
+  );
 
   return(
     <main>

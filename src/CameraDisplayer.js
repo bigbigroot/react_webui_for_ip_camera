@@ -61,9 +61,14 @@ export function CameraPage(){
   const playerRef = React.useRef(null);
   const connectRef = React.useRef(null);
 
-  const [isLogined, setIsLogined] = useOutletContext();
+  const [currentPage, setCurrentPage] = useOutletContext();
 
-  React.useEffect(()=>setIsLogined(true))
+  React.useEffect(()=>{
+      if(currentPage != 'Camera'){          
+        setCurrentPage('Camera')
+      }
+    }
+  );
 
   const videoOptions = {
     autoplay: 'muted',
