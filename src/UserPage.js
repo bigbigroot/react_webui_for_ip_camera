@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Form,
   useActionData,
-  redirect,
   useOutletContext
 } from 'react-router-dom'
 
@@ -48,7 +47,8 @@ async function sendChangePasswordReq(username, pwd) {
       const res = await response.json();
       if (res.result) {
         if (res.result === 'success') {
-          result.type = 'success'
+          result.type = 'success';
+          result.reason = 'Your Password have been modifyed successfully.';
           return result;
         } else if (res.result === 'failed') {
           result.type = 'change password failed';
@@ -79,7 +79,7 @@ async function sendAddUserReq(username, pwd){
     "passwordHA": pwdDigest
   }
   try {
-    const response = await fetch("/api/adduser",
+    const response = await fetch("/api/add-user",
       {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         headers: {
@@ -125,7 +125,7 @@ async function sendDelUserReq(username){
     "user": username
   }
   try {
-    const response = await fetch("/api/adduser",
+    const response = await fetch("/api/delete-user",
       {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         headers: {
@@ -142,10 +142,10 @@ async function sendDelUserReq(username){
       if (res.result) {
         if (res.result === 'success') {
           result.type = 'success'
-          result.reason = 'User created successfully.';
+          result.reason = 'User have been deleted successfully.';
           return result;
         } else if (res.result === 'failed') {
-          result.type = 'add user failed';
+          result.type = 'delete user failed';
           result.reason = res.message;
           return result;
         }
@@ -183,12 +183,7 @@ export async function UserAction({ params, request }) {
       return errors;
     }
     
-    const ret = await sendChangePasswordReq(username, password1);
-    if(ret.type === 'success'){
-      return redirect('/login')
-    }else{
-      return ret;
-    }
+    return await sendChangePasswordReq(username, password1);
   }else if(op === 'delete-user'){
     const username = formData.get('username');
 
@@ -221,11 +216,28 @@ export async function UserAction({ params, request }) {
 }
 
 function ChangePasswordForm() {
+  const username = sessionStorage.getItem('currentUser');
   const errors = useActionData();
   const [showError, setShowError] = useState(true);
-  const username = sessionStorage.getItem('currentUser');
+  const isSuccessRef = useRef(false);
+
+  if(errors){
+    if(errors.type === 'success'){
+      isSuccessRef.current = true;
+    }else{
+      isSuccessRef.current = false;
+    }
+  }
 
   const refresh = () => setShowError(true);
+
+  function handleClose(){
+    if(isSuccessRef.current){
+      window.location.href ='/login';
+    }else{        
+      setShowError(false);
+    }
+  }
 
   return (
     <>
@@ -250,7 +262,7 @@ function ChangePasswordForm() {
 
           {
             (errors) ? (
-              <NotifyWindow title={errors.type} show={showError} setShow={setShowError}>
+              <NotifyWindow title={errors.type} show={showError} setShow={setShowError} onClose={handleClose}>
                 {errors.reason}
               </NotifyWindow>
             ) : null
@@ -263,29 +275,89 @@ function ChangePasswordForm() {
 }
 
 function CloseAccountCheck() {
+  const errors = useActionData();
+  const [showError, setShowError] = useState(true);
   const username = sessionStorage.getItem('currentUser');
+  const isSuccessRef = useRef(false);
+
+  if(errors){
+    if(errors.type === 'success'){
+      isSuccessRef.current = true;
+    }else{
+      isSuccessRef.current = false;
+    }
+  }
+
+  function handleClose(){
+    if(isSuccessRef.current){
+      window.location.href ='/login';
+    }else{        
+      setShowError(false);
+    }
+  }
 
   return (
     <div className='mb-5 mx-5'>
       <p className="text-sm-start p-2">
         This action will delete all data on your account. Are you sure you want to continue with this operation?
       </p>
-      <Form method='post' action='/user'>
+      <Form method='post' action='/user' replace >
         <input type="hidden" id="operation" name="operation" value="delete-user" />
         <input type="hidden" id="username" name="username" value={username} />
         <MDBBtn type='submit'>
           I decided to close my account
         </MDBBtn>
+        {
+          (errors) ? (
+            <NotifyWindow title={errors.type} show={showError} setShow={setShowError} onClose={handleClose}>
+              {errors.reason}
+            </NotifyWindow>
+          ) : null
+        }
       </Form>
     </div>
   );
 }
 
 function ShowUserManager(){
-  const usersList =["admin", 'alice'];
   const errors = useActionData();
   const [showError, setShowError] = useState(true);
   const [isCreateUser, setIsCreateUser] = useState(false);
+  const [allUsers, setAllUsers] = useState([]);
+
+  function handleClose(){
+    // setShowError(false);
+    window.location.reload();
+  }
+
+  function getAllUsers(){
+    const auth_token = sessionStorage.getItem('token');
+
+    fetch("/api/allusers",
+      {
+        method: 'GET', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          'Accept': 'application.json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth_token}`,
+        }
+      }
+    ).then((response)=>{
+      if (response.ok) {
+        response.json().then(
+          (data)=>{
+            if(data.result==='success'){
+              setAllUsers(data.allusers);
+            }
+          }
+        );
+      }
+    });
+  }
+
+  useEffect(()=>{
+    getAllUsers();
+  });
 
   return(
     <div className='mx-5 mb-5'>
@@ -327,7 +399,7 @@ function ShowUserManager(){
     
               {
                 (errors) ? (
-                  <NotifyWindow title={errors.type} show={showError} setShow={setShowError}>
+                  <NotifyWindow title={errors.type} show={showError} setShow={setShowError} onClose={handleClose}>
                     {errors.reason}
                   </NotifyWindow>
                 ) : null
@@ -336,7 +408,7 @@ function ShowUserManager(){
           </Form>
         ) : (
           <>
-            <UsersTable users={usersList}/>
+            <UsersTable users={allUsers}/>
             <div className='d-flex mt-4 justify-content-start'>
               <MDBRow className='gx-2'>
                 <MDBCol>
@@ -346,7 +418,8 @@ function ShowUserManager(){
                   </MDBBtn>
                 </MDBCol>
                 <MDBCol>
-                  <MDBBtn>
+                  <MDBBtn onClick={getAllUsers}
+                  >
                     <MDBIcon fas icon="sync" />
                   </MDBBtn>
                 </MDBCol>
@@ -369,7 +442,7 @@ export function UserPage() {
     if (value === basicActive) {
       return;
     }
-
+    sessionStorage.setItem('UserPageTab', value);
     setBasicActive(value);
   };
 
@@ -379,6 +452,14 @@ export function UserPage() {
       setCurrentPage('User')
     }
   }
+  );
+
+  useEffect(() => {
+    if (sessionStorage.getItem('UserPageTab')) {
+      const active = sessionStorage.getItem('UserPageTab');
+      setBasicActive(active);
+    }
+  },[setBasicActive]
   );
 
   return (

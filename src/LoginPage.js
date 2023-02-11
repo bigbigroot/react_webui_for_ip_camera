@@ -9,6 +9,7 @@ import { NotifyWindow } from './Compoment';
 export function LoginLoader(){
   try{
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('UserPageTab');
   }catch(e){
     console.error(e);
   }
@@ -55,7 +56,8 @@ export async function LoginAction({params, request}){
           return redirect('/camera');
         }else if(res.result === 'Deny'){          
           errors.type = 'Account verification failed';
-          errors.reason = res.message+' please enter the correct username and password';
+          errors.reason = res.message + ' please enter the correct username and password';
+          return errors;
         }
       }
     }else{
@@ -78,6 +80,10 @@ export function LoginForm(props){
   const [showError, setShowError] = useState(true);
   
   const refresh = ()=>setShowError(true);
+
+  function handleClose(){
+    setShowError(false);
+  }
 
   return(
     <div className="text-center mt-5 p-5 border bg-light rounded shadow" id="loginform">
@@ -103,7 +109,7 @@ export function LoginForm(props){
         
         {
           (errors)?(
-            <NotifyWindow title={errors.type} show={showError} setShow={setShowError}>
+            <NotifyWindow title={errors.type} show={showError} setShow={setShowError} onClose={handleClose}>
               {errors.reason}
             </NotifyWindow>
           ) : null

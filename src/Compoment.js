@@ -1,8 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import {
 	MDBIcon,
   MDBBtn,
   MDBModal,
+  MDBInput,
   MDBModalDialog,
   MDBModalContent,
   MDBModalHeader,
@@ -13,16 +14,12 @@ import {
   MDBTableBody,
   MDBTableHead
 } from 'mdb-react-ui-kit';
-import { useState } from 'react';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
-import { useSubmit, useActionData, Form, useSearchParams } from 'react-router-dom';
+import { useActionData, Form } from 'react-router-dom';
 
 export function NotifyWindow(props) {
-  const {title, show, setShow} = props;
-//   const [showWin, setShowWin] = useState(!disable);
-
-  const closeWin = () => setShow(false);
+  const {title, onClose, show, setShow} = props;
 
   return (
       <MDBModal show={show} setShow={setShow} tabIndex='-1'>
@@ -34,7 +31,7 @@ export function NotifyWindow(props) {
                 <MDBModalTitle>{title}</MDBModalTitle>
               ) : null
             }
-              <MDBBtn className='btn-close' color='none' onClick={closeWin}></MDBBtn>
+              <MDBBtn className='btn-close' color='none' onClick={onClose}></MDBBtn>
             </MDBModalHeader>
             <MDBModalBody>
               <div className='p-4 text-start'> 
@@ -42,7 +39,7 @@ export function NotifyWindow(props) {
               </div> 
             </MDBModalBody>
             <MDBModalFooter>
-              <MDBBtn color='secondary' onClick={closeWin}>
+              <MDBBtn color='secondary' onClick={onClose}>
                 Close
               </MDBBtn>
             </MDBModalFooter>
@@ -53,10 +50,10 @@ export function NotifyWindow(props) {
 }
 
 export function VerifyWindow(props) {
-  const {title, buttonText, onOK, show, setShow} = props;
+  const {isVerify, title, buttonText, onOK, onClose, show, setShow} = props;
 //   const [showWin, setShowWin] = useState(!disable);
 
-  const closeWin = () => setShow(false);
+  // const closeWin = () => setShow(false);
 
   return (
       <MDBModal show={show} setShow={setShow} tabIndex='-1'>
@@ -68,7 +65,7 @@ export function VerifyWindow(props) {
                 <MDBModalTitle>{title}</MDBModalTitle>
               ) : null
             }
-              <MDBBtn className='btn-close' color='none' onClick={closeWin}></MDBBtn>
+              <MDBBtn className='btn-close' color='none' onClick={onClose}></MDBBtn>
             </MDBModalHeader>
             <MDBModalBody>
               <div className='p-4 text-start'> 
@@ -76,10 +73,14 @@ export function VerifyWindow(props) {
               </div> 
             </MDBModalBody>
             <MDBModalFooter>
-              <MDBBtn color='secondary' type='submit'>
-                {buttonText}
-              </MDBBtn>
-              <MDBBtn color='secondary' onClick={closeWin}>
+              {
+                (isVerify)?(                      
+                  <MDBBtn color='secondary' type='submit' onClick={onOK}>
+                    {buttonText}
+                  </MDBBtn>
+                ): null
+              }
+              <MDBBtn color='secondary' onClick={onClose}>
                 Close
               </MDBBtn>
             </MDBModalFooter>
@@ -106,23 +107,64 @@ export function Notification(props) {
 
 export function UsersTable(props){
 	const {users} = props;
-	const submit = useSubmit();
-	const [showDeleteWin, setShowDeleteWin] = useState(false);
-  const [showError, setShowError] = useState(true);
-  const selectUserRef = useRef(null);
-  const errors = useActionData();
+	const [showEditWin, setShowEditWin] = useState(false);
+  const [showDelWin, setShowDelWin] = useState(false);
+  const [showError, setShowError] = useState(false);
+  // const [active, setActive] = useState("");
+  const selectUserRef = useRef("");
+  const selectOpRef = useRef("");
+  const result = useActionData();
 
-  function handleSubmit(){
-    // setShowDeleteWin(false);
+  let title, inhalt;
+  if(result){
+    title = (result.type)?(result.type):("Unknow");
+    inhalt = (result.reason)?(result.reason):("Unknow");
+  }else{
+    title = "Unknow";
+    inhalt = "Unknow";
+  }
+
+
+  function handleCloseWin(){
+    if(selectOpRef.current === 'change-password'){
+      setShowEditWin(false); 
+    }else if(selectOpRef.current === 'delete-user'){
+      setShowDelWin(false); 
+    }else{
+      setShowError(false);
+      window.location.reload();
+    }
+  }
+
+
+  function handleConfirm(){
+    // setActive("result");
+    if(selectOpRef.current === 'change-password'){
+      setShowEditWin(false); 
+      setTimeout(() => {
+        setShowError(true);
+      }, 400);
+    }else if(selectOpRef.current === 'delete-user'){
+      setShowDelWin(false); 
+      setTimeout(() => {
+        setShowError(true);
+      }, 400);
+    }
+    selectOpRef.current = '';
   }
 
 	function handleDelete(user){
     selectUserRef.current = user;
-		setShowDeleteWin(true);
+    selectOpRef.current = 'delete-user';
+    // setActive("delete-user");
+		setShowDelWin(true);
 	}
 
 	function handleEdit(user){
-
+    selectUserRef.current = user;
+    // setActive("change-password");
+    selectOpRef.current = 'change-password';
+		setShowEditWin(true);
 	}
 
 	return (
@@ -139,18 +181,18 @@ export function UsersTable(props){
           {
             (users)?(
               users.map((username, index) => (
-                <tr>
+                <tr key={index+1}>
                   <th scope='row'>{index+1}</th>
                   <td >{username}</td>
                   <td>
                     <MDBBtn tag='a' color='none' className='m-1'
                     onClick={()=>{handleEdit(username)}}>
-                      <MDBIcon fabs icon='edit' size='lg' />
+                      <MDBIcon fas icon='edit' size='lg' />
                     </MDBBtn>
                     
                     <MDBBtn tag='a' color='none' className='m-1'
                     onClick={()=>{handleDelete(username)}}>
-                      <MDBIcon fabs icon='trash-alt' size='lg' />
+                      <MDBIcon fas icon='trash-alt' size='lg' />
                     </MDBBtn>
                   </td>
                 </tr>
@@ -159,21 +201,30 @@ export function UsersTable(props){
           }
         </MDBTableBody>
       </MDBTable>
-      <Form method='post' action='/user' onSubmit={handleSubmit}>
-        <input type="hidden" id="operation" name="operation" value="delete-user" />
+      <Form method='post' action='/user' onSubmit={handleConfirm} >
+        <input type="hidden" id="operation" name="operation" value={selectOpRef.current} />
         <input type="hidden" id="username" name="username" value={selectUserRef.current} />
-        <VerifyWindow title={'Delete User:'} buttonText="I'm Sure"
-        show={showDeleteWin} setShow={setShowDeleteWin}>
+        <VerifyWindow isVerify={true} title={'Change Password:'} buttonText={'apply'}
+        show={showEditWin} setShow={setShowEditWin} onClose={handleCloseWin}>
+          <>
+            <MDBInput
+              className='mb-4' type='password' id='formUsername'
+              name='passwd1' label='Enter Password' maxLength='16'
+            />
+            <MDBInput
+              className='mb-2' type='password' id='formPasswd'
+              name='passwd2' label='Enter  password again' maxLength='32'
+            />
+          </>
+        </VerifyWindow>
+        <VerifyWindow isVerify={true} title={'Change Password:'} buttonText={'delete'}
+        show={showDelWin} setShow={setShowDelWin} onClose={handleCloseWin}>
           This action will delete all data on your account.
           Are you sure you want to continue with this operation?
         </VerifyWindow>
-        {
-          (errors) ? (
-            <NotifyWindow title={errors.type} show={showError} setShow={setShowError}>
-              {errors.reason}
-            </NotifyWindow>
-          ) : null
-        }
+        <NotifyWindow title={title} show={showError} setShow={setShowError}  onClose={handleCloseWin}>
+          {inhalt}
+        </NotifyWindow>
       </Form>
 		</>
 	);
